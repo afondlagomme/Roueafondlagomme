@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>À Fond la Gomme - Roue</title>
+<title>À Fond la Gomme - Roue Premium</title>
 
 <style>
 body {
@@ -17,7 +17,7 @@ padding:20px;
 h1 {
 color:#FFD000;
 font-size:34px;
-text-shadow:0 0 10px #ffae00;
+text-shadow:0 0 15px #ffae00;
 }
 
 .subtitle {
@@ -31,7 +31,7 @@ height:320px;
 border-radius:50%;
 border:12px solid #FFD000;
 margin:30px auto;
-box-shadow:0 0 30px rgba(255,208,0,0.6);
+box-shadow:0 0 40px rgba(255,208,0,0.7);
 transition: transform 4s cubic-bezier(.17,.67,.83,.67);
 background: conic-gradient(
 #ffd000 0deg 72deg,
@@ -71,12 +71,25 @@ background:#FFD000;
 color:black;
 }
 
+input {
+padding:10px;
+margin-top:15px;
+border-radius:5px;
+border:none;
+width:250px;
+text-align:center;
+}
+
 .result {
 font-size:26px;
 margin-top:20px;
 font-weight:bold;
 color:#FFD000;
 text-shadow:0 0 10px #ffae00;
+}
+
+.hidden {
+display:none;
 }
 
 </style>
@@ -88,20 +101,29 @@ text-shadow:0 0 10px #ffae00;
 
 <p class="subtitle">🎁 Tente ta chance et obtiens une remise immédiate</p>
 
+<!-- ETAPE 1 -->
 <p>1️⃣ Laisse ton avis Google</p>
 
 <a href="https://www.google.com/search?q=avis+a+fond+la+gomme" target="_blank">
 <button class="reviewBtn">Laisser un avis</button>
 </a>
 
-<p>2️⃣ Confirme pour débloquer la roue</p>
+<!-- ETAPE 2 -->
+<p>2️⃣ Entre ton numéro pour valider</p>
+<input type="tel" id="phone" placeholder="Ton numéro">
 
-<button onclick="enableSpin()" class="spinBtn">J'ai laissé un avis</button>
+<br>
+
+<button onclick="validateStep()" class="spinBtn">Valider</button>
+
+<div id="game" class="hidden">
 
 <div id="pointer"></div>
 <div id="wheel"></div>
 
-<button onclick="spinWheel()" id="spin" disabled class="spinBtn">TOURNER LA ROUE</button>
+<button onclick="spinWheel()" id="spin" class="spinBtn">TOURNER LA ROUE</button>
+
+</div>
 
 <div class="result" id="result"></div>
 
@@ -109,35 +131,78 @@ text-shadow:0 0 10px #ffae00;
 
 let wheel = document.getElementById("wheel");
 let result = document.getElementById("result");
-let spinButton = document.getElementById("spin");
 
-// 🎯 PROBABILITÉS (plus de -5 et -10)
 let rewards = [
-"-5€","-5€","-5€",
+"-5€","-5€","-5€","-5€",
 "-10€","-10€","-10€",
 "-15€",
 "-20€"
 ];
 
-function enableSpin(){
-spinButton.disabled = false;
-alert("Merci ! Tu peux maintenant tourner la roue 🎁");
+// 🔒 BLOQUER 1 TOUR PAR TEL
+if(localStorage.getItem("played")){
+document.body.innerHTML = "<h1>⚠️ Déjà utilisé</h1><p>Offre valable une seule fois</p>";
 }
 
-function spinWheel(){
-spinButton.disabled = true;
+// VALIDATION
+function validateStep(){
+let phone = document.getElementById("phone").value;
 
-// tirage pondéré
+if(phone.length < 8){
+alert("Entre un numéro valide");
+return;
+}
+
+document.getElementById("game").classList.remove("hidden");
+alert("🎁 Tu peux maintenant tourner la roue !");
+}
+
+// 🎡 SPIN
+function spinWheel(){
+
+document.getElementById("spin").disabled = true;
+
+// PROBA BOOST
 let rand = Math.floor(Math.random() * rewards.length);
 
-// calcul rotation
+// rotation réaliste
 let deg = 3600 + (rand * (360 / rewards.length));
 
 wheel.style.transform = "rotate("+deg+"deg)";
 
+// 🎉 RESULTAT
 setTimeout(()=>{
-result.innerHTML = "🎉 Bravo ! Tu gagnes " + rewards[rand];
+
+let gain = rewards[rand];
+
+result.innerHTML = "🎉 Bravo ! Tu gagnes " + gain;
+
+// 🎊 CONFETTI
+confettiEffect();
+
+// 🔒 BLOQUER
+localStorage.setItem("played", "yes");
+
 },4000);
+
+}
+
+// 🎉 CONFETTI
+function confettiEffect(){
+for(let i=0;i<100;i++){
+let div = document.createElement("div");
+div.style.position = "fixed";
+div.style.width = "6px";
+div.style.height = "6px";
+div.style.background = "yellow";
+div.style.top = Math.random()*window.innerHeight+"px";
+div.style.left = Math.random()*window.innerWidth+"px";
+div.style.opacity = Math.random();
+div.style.zIndex = 999;
+document.body.appendChild(div);
+
+setTimeout(()=>{div.remove();},2000);
+}
 }
 
 </script>
