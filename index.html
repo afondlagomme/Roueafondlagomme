@@ -1,34 +1,44 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roue des Réductions - À Fond la Gomme</title>
+<title>À Fond la Gomme - Roue</title>
+
 <style>
 body {
-font-family: Arial, sans-serif;
+font-family: Arial;
 text-align:center;
-background:#111;
+background:#0f0f0f;
 color:white;
 padding:20px;
 }
 
-h1 {font-size:32px;}
+h1 {
+color:#FFD000;
+font-size:34px;
+text-shadow:0 0 10px #ffae00;
+}
+
+.subtitle {
+font-size:18px;
+margin-bottom:20px;
+}
 
 #wheel {
 width:320px;
 height:320px;
 border-radius:50%;
-border:12px solid #fff;
+border:12px solid #FFD000;
 margin:30px auto;
+box-shadow:0 0 30px rgba(255,208,0,0.6);
 transition: transform 4s cubic-bezier(.17,.67,.83,.67);
 background: conic-gradient(
-#27ae60 0deg 72deg,
-#2ecc71 72deg 144deg,
-#f1c40f 144deg 216deg,
-#e67e22 216deg 288deg,
-#e74c3c 288deg 360deg
+#ffd000 0deg 72deg,
+#ff9d00 72deg 144deg,
+#ff6a00 144deg 216deg,
+#ff3b00 216deg 288deg,
+#ffd000 288deg 360deg
 );
 }
 
@@ -37,7 +47,7 @@ width:0;
 height:0;
 border-left:25px solid transparent;
 border-right:25px solid transparent;
-border-bottom:50px solid red;
+border-bottom:50px solid #FFD000;
 margin:auto;
 }
 
@@ -48,69 +58,88 @@ border:none;
 border-radius:6px;
 cursor:pointer;
 margin-top:15px;
+font-weight:bold;
 }
 
-.reviewBtn {background:#2ecc71;color:white;}
-.spinBtn {background:#3498db;color:white;}
+.reviewBtn {
+background:#ff3b00;
+color:white;
+}
+
+.spinBtn {
+background:#FFD000;
+color:black;
+}
 
 .result {
 font-size:26px;
 margin-top:20px;
 font-weight:bold;
+color:#FFD000;
+text-shadow:0 0 10px #ffae00;
 }
 
-a {
-color:#2ecc71;
-font-size:18px;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🎁 Tourne la roue et gagne une réduction !</h1>
+<h1>À FOND LA GOMME</h1>
+
+<p class="subtitle">🎁 Tente ta chance et obtiens une remise immédiate</p>
 
 <p>1️⃣ Laisse ton avis Google</p>
 
-<a href="https://www.google.com/search?client=ms-android-samsung-ss&hs=oOWp&sca_esv=a598d55f83047397&q=avis+sur+a+fond+la+gomme&uds=ALYpb_ncDc7jTlmw6Mmq7NjuX5c-9bjW2jlxW0C_8n2PeIyI4HRQFHtNV8WSC1cm9Yk5YHhS34hE8gJU0NmBLHbBpR8mwE8SxNPdmatN4myJ6Fi1jIK9DtOMpqpIdpjym1hMPowxwzcCVJJXEcJMYtWsok2aLGMra6dNQVJ0IStnh5dcaqFtkzUWqZxYZ2aM2biB-5oauit7IQ_J42bmJSQJu5mPjOCMCTpUFGzVtYewBQP5hnU0Yo-_5uGDsMVGjC5YU8vOSi2I&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOY4kTYRJGLqowsbzyIuHgvgsIVRLxrWHiISVmpXT51YV_ZYOjn918lyByd0pRPlYhFtVsKlXcaqL1xzXNOCvr1sRbGTfGkuqo8cw6WSirE4_Aa_5OQ%3D%3D&sa=X&ved=2ahUKEwiK-KD1oqCTAxUJRaQEHYo_A8gQxKsJKAB6BAgTEAE&ictx=1&stq=1&cs=1&lei=3Mq1aYqaE4mKkdUPiv-MwAw" target="_blank">
+<a href="https://www.google.com/search?q=avis+a+fond+la+gomme" target="_blank">
 <button class="reviewBtn">Laisser un avis</button>
 </a>
 
-<p>2️⃣ Clique sur confirmer puis tourne la roue</p>
+<p>2️⃣ Confirme pour débloquer la roue</p>
 
 <button onclick="enableSpin()" class="spinBtn">J'ai laissé un avis</button>
 
 <div id="pointer"></div>
 <div id="wheel"></div>
 
-<button onclick="spinWheel()" id="spin" disabled class="spinBtn">Tourner la roue</button>
+<button onclick="spinWheel()" id="spin" disabled class="spinBtn">TOURNER LA ROUE</button>
 
 <div class="result" id="result"></div>
 
 <script>
+
 let wheel = document.getElementById("wheel");
 let result = document.getElementById("result");
 let spinButton = document.getElementById("spin");
 
-let rewards = ["-10€","-15€","-20€","-25€","Perdu"];
+// 🎯 PROBABILITÉS (plus de -5 et -10)
+let rewards = [
+"-5€","-5€","-5€",
+"-10€","-10€","-10€",
+"-15€",
+"-20€"
+];
 
 function enableSpin(){
-spinButton.disabled=false;
-alert("Merci pour ton avis ! Tu peux maintenant tourner la roue.");
+spinButton.disabled = false;
+alert("Merci ! Tu peux maintenant tourner la roue 🎁");
 }
 
 function spinWheel(){
-spinButton.disabled=true;
+spinButton.disabled = true;
 
-let rand = Math.floor(Math.random()*rewards.length);
-let deg = 3600 + (rand * 72);
+// tirage pondéré
+let rand = Math.floor(Math.random() * rewards.length);
+
+// calcul rotation
+let deg = 3600 + (rand * (360 / rewards.length));
 
 wheel.style.transform = "rotate("+deg+"deg)";
 
 setTimeout(()=>{
-result.innerHTML = "🎉 Résultat : " + rewards[rand];
+result.innerHTML = "🎉 Bravo ! Tu gagnes " + rewards[rand];
 },4000);
 }
+
 </script>
 
 </body>
