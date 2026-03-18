@@ -22,13 +22,13 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ✅ ZONE CLIQUABLE AJUSTÉE (PLUS HAUT) */
+/* 🎯 ZONE PARFAITEMENT AJUSTÉE */
 #google-zone {
     position: absolute;
-    bottom: 18%;   /* 🔥 REMONTÉ */
-    left: 6%;
-    width: 35%;
-    height: 18%;
+    bottom: 20%;
+    left: 4%;
+    width: 38%;
+    height: 16%;
     z-index: 10;
     cursor: pointer;
 }
@@ -90,7 +90,6 @@ body {
 
 <div class="background"></div>
 
-<!-- ZONE INVISIBLE SUR TON IMAGE -->
 <div id="google-zone"></div>
 
 <div id="wheel-container">
@@ -100,7 +99,7 @@ body {
 
 <div id="popup">
     <h2 id="result"></h2>
-    <button onclick="location.reload()">REJOUER</button>
+    <p>📸 Fais une capture et montre-la à l'accueil</p>
 </div>
 
 <script>
@@ -115,7 +114,7 @@ if(localStorage.getItem("played")){
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* ✅ CLICK SUR IMAGE → NOUVEL ONGLET */
+/* 🔗 CLICK SUR IMAGE */
 document.getElementById("google-zone").addEventListener("click", function() {
 
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
