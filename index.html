@@ -14,7 +14,6 @@ body {
     font-family: Arial Black;
 }
 
-/* IMAGE FOND */
 .background {
     position: absolute;
     width: 100%;
@@ -22,7 +21,6 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE AVIS */
 #google-zone {
     position: absolute;
     bottom: 20%;
@@ -33,28 +31,27 @@ body {
     cursor: pointer;
 }
 
-/* ROUE */
 #wheelCanvas {
     position: absolute;
     top: 56%;
     left: 72%;
     transform: translate(-50%, -50%);
-    width: 220px;
-    height: 220px;
+    width: 150px;
+    height: 150px;
 }
 
-/* BOUTON */
 #spin {
     position: absolute;
     top: 56%;
     left: 72%;
     transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: gold;
     border: 4px solid white;
     font-weight: bold;
+    font-size: 10px;
     cursor: pointer;
 }
 
@@ -62,7 +59,6 @@ body {
     background: gray;
 }
 
-/* POPUP */
 #popup {
     position: fixed;
     top: 50%;
@@ -85,7 +81,7 @@ body {
 
 <div id="google-zone"></div>
 
-<canvas id="wheelCanvas" width="220" height="220"></canvas>
+<canvas id="wheelCanvas" width="150" height="150"></canvas>
 <button id="spin" disabled>AVIS</button>
 
 <div id="popup">
@@ -101,7 +97,6 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🎯 GAINS (cachés visuellement) */
 const segments = ["", "", "", "", ""];
 
 const rewards = [
@@ -113,13 +108,10 @@ const rewards = [
 ];
 
 let angle = 0;
-let spinning = false;
 
-/* 🎨 DESSIN ROUE */
 function drawWheel() {
-    let size = 110;
-    let center = 110;
-
+    let size = 75;
+    let center = 75;
     let arc = Math.PI * 2 / segments.length;
 
     for(let i=0;i<segments.length;i++){
@@ -133,78 +125,59 @@ function drawWheel() {
 
 drawWheel();
 
-/* 🎲 PROBA */
 function getReward(){
     let total = rewards.reduce((a,b)=>a+b.weight,0);
     let rand = Math.random()*total;
-
     for(let r of rewards){
         if(rand < r.weight) return r.text;
         rand -= r.weight;
     }
 }
 
-/* 🎰 ANIMATION REALISTE */
 function spinWheel(targetIndex){
-
     let arc = 360 / segments.length;
     let targetAngle = (360 * 5) + (targetIndex * arc);
-
     let current = 0;
 
     function animate(){
         current += (targetAngle - current) * 0.05;
-
         angle = current * Math.PI / 180;
-
-        ctx.clearRect(0,0,220,220);
+        ctx.clearRect(0,0,150,150);
         drawWheel();
-
         if(Math.abs(targetAngle - current) > 0.5){
             requestAnimationFrame(animate);
         } else {
             finish();
         }
     }
-
     animate();
 }
 
-/* FIN */
+let currentGain;
+
 function finish(){
     result.innerText = "🎉 BRAVO - " + currentGain;
     popup.style.display = "block";
-    localStorage.setItem("played","true");
+    localStorage.setItem("played_afond_gomme","true");
 }
 
-/* 🔒 déjà joué */
-if(localStorage.getItem("played")){
+if(localStorage.getItem("played_afond_gomme")){
     spinBtn.disabled = true;
-    spinBtn.innerText = "DÉJÀ JOUÉ";
+    spinBtn.innerText = "FINI";
 }
 
-/* CLICK AVIS */
 document.getElementById("google-zone").onclick = () => {
-
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
-
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
     },1500);
 };
 
-/* SPIN */
-let currentGain;
-
 spinBtn.onclick = () => {
-
     spinBtn.disabled = true;
-
     currentGain = getReward();
-
-    let index = Math.floor(Math.random()*5);
-
+    let index = Math.floor(Math.random()*segments.length);
     spinWheel(index);
 };
 </script>
