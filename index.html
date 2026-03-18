@@ -14,7 +14,7 @@ body {
     font-family: Arial Black;
 }
 
-/* IMAGE EN FOND */
+/* IMAGE FOND */
 .background {
     position: absolute;
     width: 100%;
@@ -22,15 +22,16 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE CLIQUABLE SUR "LAISSE TON AVIS" */
+/* 🔴 ZONE CLIQUABLE (MODE TEST) */
 #google-zone {
     position: absolute;
-    bottom: 6%;
-    left: 6%;
-    width: 30%;
-    height: 15%;
-    cursor: pointer;
-    z-index: 10;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: red;
+    opacity: 0.3;
+    z-index: 999;
 }
 
 /* ROUE */
@@ -90,7 +91,6 @@ body {
 
 <div class="background"></div>
 
-<!-- 👇 ZONE INVISIBLE SUR TON IMAGE -->
 <div id="google-zone"></div>
 
 <div id="wheel-container">
@@ -109,24 +109,18 @@ const wheel = document.getElementById("wheel");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🔒 bloque si déjà joué */
-if(localStorage.getItem("played")){
-    spinBtn.disabled = true;
-    spinBtn.innerText = "DÉJÀ JOUÉ";
-}
+/* 🔗 TEST CLICK */
+document.getElementById("google-zone").addEventListener("click", function() {
 
-/* 🔗 CLICK SUR IMAGE */
-document.getElementById("google-zone").onclick = () => {
+    alert("CLICK OK ✅"); // 👈 vérifie que ça marche
 
-    // 👉 TON LIEN GOOGLE PRO
     window.location.href = "https://g.page/r/CeRMm2XZ2Jh1EAE/review";
 
-    // active roue
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
     },1500);
-};
+});
 
 /* 🎯 PROBA */
 const rewards = [
@@ -147,7 +141,6 @@ function getReward(){
     }
 }
 
-/* 🎡 ANGLES */
 const angles = {
     "5%": 30,
     "10%": 90,
@@ -156,7 +149,6 @@ const angles = {
     "PERDU": 300
 };
 
-/* 🎰 SPIN */
 spinBtn.onclick = () => {
 
     spinBtn.disabled = true;
