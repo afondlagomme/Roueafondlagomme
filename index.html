@@ -8,7 +8,6 @@
         body {
             margin: 0;
             padding: 0;
-            /* CORRECTION 1 : Fond noir pour encadrer l'image si besoin */
             background: #000;
             height: 100vh;
             display: flex;
@@ -18,23 +17,31 @@
             font-family: 'Arial Black', sans-serif;
         }
 
-        /* CORRECTION 2 : Conteneur pour l'image entière sans coupure */
         .background-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* Assure-toi que ton image est bien nommée fond-roue.png sur GitHub */
             background: url('fond-roue.png') no-repeat center center;
-            background-size: contain; /* L'image entière est visible */
+            background-size: contain;
             z-index: -1;
         }
 
-        /* Conteneur pour la roue invisible superposée à l'image */
+        /* ZONE INVISIBLE par-dessus le bouton "Laisse ton avis" du dessin */
+        #google-hitbox {
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
+            width: 25%;
+            height: 12%;
+            cursor: pointer;
+            z-index: 100;
+            /* background: rgba(255,0,0,0.3);  <-- Enlève les // au début de cette ligne pour voir la zone rouge et l'ajuster, puis remets-les */
+        }
+
         #wheel-container {
             position: absolute;
-            /* Ces valeurs sont pour le centrage, à ajuster si besoin */
             top: 55%; 
             left: 72%;
             transform: translate(-50%, -50%);
@@ -48,7 +55,6 @@
             border-radius: 50%;
             position: relative;
             transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
-            /* CORRECTION 3 : La roue est invisible pour cacher les gains */
             background: transparent;
         }
 
@@ -68,9 +74,12 @@
             font-size: 14px;
             color: #000;
             box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        /* CORRECTION 4 : Le blocage du bouton est maintenu */
         #spin-btn:disabled { 
             background: #555; 
             color: #888;
@@ -78,26 +87,6 @@
             cursor: not-allowed; 
         }
 
-        /* Bouton Google Avis */
-        .google-link {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: #444;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 100;
-            font-size: 14px;
-        }
-
-        /* Pop-up de résultat */
         .popup {
             position: fixed;
             top: 50%;
@@ -119,19 +108,16 @@
 
     <div class="background-container"></div>
 
-    <a href="https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU" target="_blank" class="google-link" onclick="enableSpin()">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-        1. LAISSE TON AVIS POUR JOUER !
-    </a>
+    <div id="google-hitbox" onclick="openGoogleAvis()"></div>
 
     <div id="wheel-container">
-        <button id="spin-btn" disabled>TIRE !</button>
+        <button id="spin-btn" disabled>CLIQUE SUR L'AVIS</button>
         <div id="wheel"></div>
     </div>
 
     <div id="popup" class="popup">
         <h2 id="win-text"></h2>
-        <p>Prends une capture d'écran et montre-la au comptoir !</p>
+        <p>Prends une capture d'écran et montre-la à l'accueil !</p>
         <button onclick="location.reload()" style="padding:10px 20px; background:gold; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">REJOUER</button>
     </div>
 
@@ -141,16 +127,18 @@
     const popup = document.getElementById('popup');
     const winText = document.getElementById('win-text');
 
-    // CORRECTION 5 : Le blocage est maintenu
-    function enableSpin() {
+    // NOUVEAU LIEN GOOGLE DIRECT POUR "À FOND LA GOMME"
+    function openGoogleAvis() {
+        window.open("https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU", "_blank");
+        
+        // Déblocage du bouton de la roue
         setTimeout(() => {
             btn.disabled = false;
             btn.style.boxShadow = "0 0 30px gold";
             btn.innerText = "TOURNE !";
-        }, 1000); // Petit délai pour laisser le temps d'ouvrir l'avis
+        }, 1000);
     }
 
-    // Gains correspondant aux 6 segments cachés de ta roue
     const rewards = ["10%", "5%", "10%", "15%", "20%", "PERDU"];
 
     btn.addEventListener('click', () => {
@@ -159,14 +147,11 @@
         wheel.style.transform = `rotate(${randomRotation}deg)`;
 
         setTimeout(() => {
-            // Calcul précis pour 6 segments de 60 degrés
             const actualAngle = (360 - (randomRotation % 360)) % 360;
             const prizeIndex = Math.floor(actualAngle / 60);
-            
-            // Le résultat n'apparaît qu'ici, dans le pop-up
             winText.innerText = "BRAVO ! TU AS GAGNÉ : " + rewards[prizeIndex];
             popup.style.display = 'block';
-        }, 4000); // 4 secondes de rotation
+        }, 4000);
     });
 </script>
 
