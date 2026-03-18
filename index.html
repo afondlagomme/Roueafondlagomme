@@ -18,18 +18,11 @@
             font-family: 'Arial Black', sans-serif;
         }
 
-        /* Conteneur pour aligner la roue invisible sur la roue du dessin */
-        .container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-
+        /* Conteneur pour la roue invisible superposée à l'image */
         #wheel-container {
             position: absolute;
-            /* Ces valeurs sont à ajuster pour que la roue soit pile sur l'image */
             top: 55%; 
-            left: 72%;
+            left: 72%; /* Ajustement pour ton S21 et ton visuel */
             transform: translate(-50%, -50%);
             width: 320px;
             height: 320px;
@@ -41,23 +34,6 @@
             border-radius: 50%;
             position: relative;
             transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-
-        /* Les textes des gains */
-        .segment {
-            position: absolute;
-            width: 50%;
-            height: 2px;
-            top: 50%;
-            left: 50%;
-            transform-origin: left center;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            color: #fff;
-            font-size: 20px;
-            text-shadow: 2px 2px 5px #000;
         }
 
         #spin-btn {
@@ -65,57 +41,80 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
+            width: 75px;
+            height: 75px;
             background: radial-gradient(#ffcc00, #ff8800);
-            border: 3px solid #fff;
+            border: 4px solid #fff;
             border-radius: 50%;
             cursor: pointer;
             z-index: 10;
             font-weight: bold;
             font-size: 14px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
-        #spin-btn:disabled { background: #555; }
+        /* État désactivé (gris) */
+        #spin-btn:disabled { 
+            background: #555; 
+            color: #888;
+            border-color: #444;
+            cursor: not-allowed; 
+        }
+
+        /* Bouton Google Avis */
+        .google-link {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+            font-size: 14px;
+        }
 
         .popup {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             color: gold;
             padding: 30px;
             border: 4px solid gold;
             border-radius: 20px;
             text-align: center;
             display: none;
-            z-index: 100;
+            z-index: 200;
+            width: 80%;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="wheel-container">
-        <button id="spin-btn">TIRE !</button>
-        <div id="wheel">
-            <div class="segment" style="transform: rotate(30deg) translate(20px);"><span>10%</span></div>
-            <div class="segment" style="transform: rotate(90deg) translate(20px);"><span>PERDU</span></div>
-            <div class="segment" style="transform: rotate(150deg) translate(20px);"><span>20%</span></div>
-            <div class="segment" style="transform: rotate(210deg) translate(20px);"><span>15%</span></div>
-            <div class="segment" style="transform: rotate(270deg) translate(20px);"><span>10%</span></div>
-            <div class="segment" style="transform: rotate(330deg) translate(20px);"><span>5%</span></div>
-        </div>
-    </div>
-</div>
+    <a href="https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU" target="_blank" class="google-link" onclick="enableSpin()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
+        1. LAISSE TON AVIS POUR JOUER !
+    </a>
 
-<div id="popup" class="popup">
-    <h2 id="win-text"></h2>
-    <p>Prends une capture d'écran et montre-la au comptoir !</p>
-    <button onclick="location.reload()" style="padding:10px; background:gold; border:none; border-radius:5px; cursor:pointer;">Rejouer</button>
-</div>
+    <div id="wheel-container">
+        <button id="spin-btn" disabled>TIRE !</button>
+        <div id="wheel"></div>
+    </div>
+
+    <div id="popup" class="popup">
+        <h2 id="win-text"></h2>
+        <p>Prends une capture d'écran et montre-la à l'accueil !</p>
+        <button onclick="location.reload()" style="padding:10px 20px; background:gold; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">REJOUER</button>
+    </div>
 
 <script>
     const wheel = document.getElementById('wheel');
@@ -123,16 +122,28 @@
     const popup = document.getElementById('popup');
     const winText = document.getElementById('win-text');
 
+    // Débloque le bouton après le clic
+    function enableSpin() {
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.style.boxShadow = "0 0 30px gold";
+            btn.innerText = "TOURNE !";
+        }, 1000);
+    }
+
+    // Gains correspondant aux 6 segments de ton image
     const rewards = ["10%", "5%", "10%", "15%", "20%", "PERDU"];
 
     btn.addEventListener('click', () => {
         btn.disabled = true;
-        const randomSpin = Math.floor(Math.random() * 360) + 3600; 
-        wheel.style.transform = `rotate(${randomSpin}deg)`;
+        const randomRotation = Math.floor(Math.random() * 360) + 3600; 
+        wheel.style.transform = `rotate(${randomRotation}deg)`;
 
         setTimeout(() => {
-            const actualDeg = randomSpin % 360;
-            const prizeIndex = Math.floor(actualDeg / 60);
+            // Calcul précis pour 6 segments de 60 degrés
+            const actualAngle = (360 - (randomRotation % 360)) % 360;
+            const prizeIndex = Math.floor(actualAngle / 60);
+            
             winText.innerText = "BRAVO ! TU AS GAGNÉ : " + rewards[prizeIndex];
             popup.style.display = 'block';
         }, 4000);
