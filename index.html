@@ -22,7 +22,7 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* 🎯 ZONE PARFAITEMENT AJUSTÉE */
+/* ZONE AVIS */
 #google-zone {
     position: absolute;
     bottom: 20%;
@@ -33,34 +33,25 @@ body {
     cursor: pointer;
 }
 
-/* ROUE */
-#wheel-container {
+/* CANVAS ROUE */
+#wheelCanvas {
     position: absolute;
     top: 55%;
     left: 72%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
-}
-
-#wheel {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
 }
 
 /* BOUTON */
 #spin {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 55%;
+    left: 72%;
     transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     background: gold;
-    border: 4px solid white;
+    border: 5px solid white;
     font-weight: bold;
     cursor: pointer;
 }
@@ -92,40 +83,25 @@ body {
 
 <div id="google-zone"></div>
 
-<div id="wheel-container">
-    <button id="spin" disabled>LAISSE UN AVIS</button>
-    <div id="wheel"></div>
-</div>
+<canvas id="wheelCanvas" width="320" height="320"></canvas>
+<button id="spin" disabled>AVIS</button>
 
 <div id="popup">
     <h2 id="result"></h2>
-    <p>📸 Fais une capture et montre-la à l'accueil</p>
+    <p>📸 Capture et montre à l'accueil</p>
 </div>
 
 <script>
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+
 const spinBtn = document.getElementById("spin");
-const wheel = document.getElementById("wheel");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🔒 bloque si déjà joué */
-if(localStorage.getItem("played")){
-    spinBtn.disabled = true;
-    spinBtn.innerText = "DÉJÀ JOUÉ";
-}
+/* 🎯 GAINS (cachés visuellement) */
+const segments = ["", "", "", "", ""]; // vide = caché
 
-/* 🔗 CLICK SUR IMAGE */
-document.getElementById("google-zone").addEventListener("click", function() {
-
-    window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
-
-    setTimeout(()=>{
-        spinBtn.disabled = false;
-        spinBtn.innerText = "TOURNE";
-    },1500);
-});
-
-/* 🎯 PROBA */
 const rewards = [
     {text:"5%", weight:50},
     {text:"10%", weight:30},
@@ -134,6 +110,25 @@ const rewards = [
     {text:"PERDU", weight:7}
 ];
 
+let angle = 0;
+let spinning = false;
+
+/* 🎨 DESSIN ROUE */
+function drawWheel() {
+    let arc = Math.PI * 2 / segments.length;
+
+    for(let i=0;i<segments.length;i++){
+        ctx.beginPath();
+        ctx.fillStyle = i % 2 === 0 ? "#d32f2f" : "#111";
+        ctx.moveTo(160,160);
+        ctx.arc(160,160,150, i*arc + angle, (i+1)*arc + angle);
+        ctx.fill();
+    }
+}
+
+drawWheel();
+
+/* 🎲 PROBA */
 function getReward(){
     let total = rewards.reduce((a,b)=>a+b.weight,0);
     let rand = Math.random()*total;
@@ -144,31 +139,69 @@ function getReward(){
     }
 }
 
-/* 🎡 ANGLES */
-const angles = {
-    "5%": 30,
-    "10%": 90,
-    "15%": 150,
-    "20%": 210,
-    "PERDU": 300
+/* 🎰 ANIMATION REALISTE */
+function spinWheel(targetIndex){
+
+    let arc = 360 / segments.length;
+    let targetAngle = (360 * 5) + (targetIndex * arc); // plusieurs tours
+
+    let current = 0;
+
+    function animate(){
+        current += (targetAngle - current) * 0.05; // ralentissement progressif
+
+        angle = current * Math.PI / 180;
+
+        ctx.clearRect(0,0,320,320);
+        drawWheel();
+
+        if(Math.abs(targetAngle - current) > 0.5){
+            requestAnimationFrame(animate);
+        } else {
+            finish();
+        }
+    }
+
+    animate();
+}
+
+/* FIN */
+function finish(){
+    let gain = currentGain;
+    result.innerText = "🎉 BRAVO - " + gain;
+    popup.style.display = "block";
+    localStorage.setItem("played","true");
+}
+
+/* 🔒 déjà joué */
+if(localStorage.getItem("played")){
+    spinBtn.disabled = true;
+    spinBtn.innerText = "DÉJÀ JOUÉ";
+}
+
+/* CLICK AVIS */
+document.getElementById("google-zone").onclick = () => {
+
+    window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
+
+    setTimeout(()=>{
+        spinBtn.disabled = false;
+        spinBtn.innerText = "TOURNE";
+    },1500);
 };
 
-/* 🎰 SPIN */
+/* SPIN */
+let currentGain;
+
 spinBtn.onclick = () => {
 
     spinBtn.disabled = true;
 
-    let gain = getReward();
+    currentGain = getReward();
 
-    let rotation = 3600 + angles[gain];
+    let index = Math.floor(Math.random()*5);
 
-    wheel.style.transform = "rotate("+rotation+"deg)";
-
-    setTimeout(()=>{
-        result.innerText = "🎉 BRAVO - " + gain;
-        popup.style.display = "block";
-        localStorage.setItem("played", "true");
-    },4000);
+    spinWheel(index);
 };
 </script>
 
