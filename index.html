@@ -22,16 +22,15 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* 🔴 ZONE CLIQUABLE (MODE TEST) */
+/* ✅ ZONE CLIQUABLE AJUSTÉE (PLUS HAUT) */
 #google-zone {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: red;
-    opacity: 0.3;
-    z-index: 999;
+    bottom: 18%;   /* 🔥 REMONTÉ */
+    left: 6%;
+    width: 35%;
+    height: 18%;
+    z-index: 10;
+    cursor: pointer;
 }
 
 /* ROUE */
@@ -91,10 +90,11 @@ body {
 
 <div class="background"></div>
 
+<!-- ZONE INVISIBLE SUR TON IMAGE -->
 <div id="google-zone"></div>
 
 <div id="wheel-container">
-    <button id="spin" disabled>AVIS</button>
+    <button id="spin" disabled>LAISSE UN AVIS</button>
     <div id="wheel"></div>
 </div>
 
@@ -109,12 +109,16 @@ const wheel = document.getElementById("wheel");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🔗 TEST CLICK */
+/* 🔒 bloque si déjà joué */
+if(localStorage.getItem("played")){
+    spinBtn.disabled = true;
+    spinBtn.innerText = "DÉJÀ JOUÉ";
+}
+
+/* ✅ CLICK SUR IMAGE → NOUVEL ONGLET */
 document.getElementById("google-zone").addEventListener("click", function() {
 
-    alert("CLICK OK ✅"); // 👈 vérifie que ça marche
-
-    window.location.href = "https://g.page/r/CeRMm2XZ2Jh1EAE/review";
+    window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
 
     setTimeout(()=>{
         spinBtn.disabled = false;
@@ -141,6 +145,7 @@ function getReward(){
     }
 }
 
+/* 🎡 ANGLES */
 const angles = {
     "5%": 30,
     "10%": 90,
@@ -149,6 +154,7 @@ const angles = {
     "PERDU": 300
 };
 
+/* 🎰 SPIN */
 spinBtn.onclick = () => {
 
     spinBtn.disabled = true;
