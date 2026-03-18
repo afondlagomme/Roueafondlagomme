@@ -33,25 +33,27 @@ body {
     cursor: pointer;
 }
 
-/* CANVAS ROUE */
+/* ROUE */
 #wheelCanvas {
     position: absolute;
-    top: 55%;
+    top: 56%;
     left: 72%;
     transform: translate(-50%, -50%);
+    width: 220px;
+    height: 220px;
 }
 
 /* BOUTON */
 #spin {
     position: absolute;
-    top: 55%;
+    top: 56%;
     left: 72%;
     transform: translate(-50%, -50%);
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: gold;
-    border: 5px solid white;
+    border: 4px solid white;
     font-weight: bold;
     cursor: pointer;
 }
@@ -83,7 +85,7 @@ body {
 
 <div id="google-zone"></div>
 
-<canvas id="wheelCanvas" width="320" height="320"></canvas>
+<canvas id="wheelCanvas" width="220" height="220"></canvas>
 <button id="spin" disabled>AVIS</button>
 
 <div id="popup">
@@ -100,7 +102,7 @@ const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
 /* 🎯 GAINS (cachés visuellement) */
-const segments = ["", "", "", "", ""]; // vide = caché
+const segments = ["", "", "", "", ""];
 
 const rewards = [
     {text:"5%", weight:50},
@@ -115,13 +117,16 @@ let spinning = false;
 
 /* 🎨 DESSIN ROUE */
 function drawWheel() {
+    let size = 110;
+    let center = 110;
+
     let arc = Math.PI * 2 / segments.length;
 
     for(let i=0;i<segments.length;i++){
         ctx.beginPath();
         ctx.fillStyle = i % 2 === 0 ? "#d32f2f" : "#111";
-        ctx.moveTo(160,160);
-        ctx.arc(160,160,150, i*arc + angle, (i+1)*arc + angle);
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, size, i*arc + angle, (i+1)*arc + angle);
         ctx.fill();
     }
 }
@@ -143,16 +148,16 @@ function getReward(){
 function spinWheel(targetIndex){
 
     let arc = 360 / segments.length;
-    let targetAngle = (360 * 5) + (targetIndex * arc); // plusieurs tours
+    let targetAngle = (360 * 5) + (targetIndex * arc);
 
     let current = 0;
 
     function animate(){
-        current += (targetAngle - current) * 0.05; // ralentissement progressif
+        current += (targetAngle - current) * 0.05;
 
         angle = current * Math.PI / 180;
 
-        ctx.clearRect(0,0,320,320);
+        ctx.clearRect(0,0,220,220);
         drawWheel();
 
         if(Math.abs(targetAngle - current) > 0.5){
@@ -167,8 +172,7 @@ function spinWheel(targetIndex){
 
 /* FIN */
 function finish(){
-    let gain = currentGain;
-    result.innerText = "🎉 BRAVO - " + gain;
+    result.innerText = "🎉 BRAVO - " + currentGain;
     popup.style.display = "block";
     localStorage.setItem("played","true");
 }
