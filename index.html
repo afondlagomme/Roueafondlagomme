@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Roue À Fond La Gomme</title>
 
 <style>
@@ -22,44 +22,51 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE AVIS */
+/* ZONE AVIS INVISIBLE */
 #google-zone {
     position: absolute;
-    bottom: 20%;
-    left: 4%;
-    width: 38%;
-    height: 16%;
-    z-index: 10;
+    bottom: 5%;
+    left: 5%;
+    width: 35%;
+    height: 12%;
+    z-index: 20;
     cursor: pointer;
 }
 
-/* ROUE */
+/* ROUE RÉDUITE */
 #wheelCanvas {
     position: absolute;
-    top: 56%;
-    left: 72%;
+    top: 55.5%; /* Ajustement vertical */
+    left: 71.8%; /* Ajustement horizontal */
     transform: translate(-50%, -50%);
-    width: 220px;
-    height: 220px;
+    width: 160px; /* Taille réduite de 220 à 160 */
+    height: 160px;
+    z-index: 5;
 }
 
-/* BOUTON */
+/* BOUTON RÉDUIT */
 #spin {
     position: absolute;
-    top: 56%;
-    left: 72%;
+    top: 55.5%;
+    left: 71.8%;
     transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
+    width: 55px; /* Taille réduite de 70 à 55 */
+    height: 55px;
     border-radius: 50%;
-    background: gold;
-    border: 4px solid white;
+    background: radial-gradient(#ffcc00, #ff8800);
+    border: 3px solid white;
     font-weight: bold;
+    font-size: 10px;
     cursor: pointer;
+    z-index: 15;
+    color: black;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 #spin:disabled {
-    background: gray;
+    background: #555;
+    color: #888;
+    border-color: #444;
 }
 
 /* POPUP */
@@ -68,13 +75,24 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    background: black;
+    background: rgba(0,0,0,0.9);
     color: gold;
     padding: 30px;
     border: 3px solid gold;
     border-radius: 15px;
     display: none;
     text-align: center;
+    z-index: 100;
+    width: 80%;
+}
+
+#popup button {
+    background: gold;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 15px;
 }
 </style>
 </head>
@@ -85,46 +103,43 @@ body {
 
 <div id="google-zone"></div>
 
-<canvas id="wheelCanvas" width="220" height="220"></canvas>
+<canvas id="wheelCanvas" width="160" height="160"></canvas>
 <button id="spin" disabled>AVIS</button>
 
 <div id="popup">
     <h2 id="result"></h2>
-    <p>📸 Capture et montre à l'accueil</p>
+    <p>📸 Capture cet écran et montre-le au comptoir pour profiter de ta remise !</p>
+    <button onclick="location.reload()">REJOUER</button>
 </div>
 
 <script>
 const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
-
 const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
-const result = document.getElementById("result");
+const resultText = document.getElementById("result");
 
-/* 🎯 GAINS (cachés visuellement) */
-const segments = ["", "", "", "", ""];
-
+const segments = 6; // Aligné sur les 6 parts de ton image
 const rewards = [
-    {text:"5%", weight:50},
     {text:"10%", weight:30},
+    {text:"5%", weight:40},
+    {text:"20%", weight:5},
     {text:"15%", weight:10},
-    {text:"20%", weight:3},
-    {text:"PERDU", weight:7}
+    {text:"10%", weight:10},
+    {text:"PERDU", weight:5}
 ];
 
 let angle = 0;
-let spinning = false;
 
-/* 🎨 DESSIN ROUE */
 function drawWheel() {
-    let size = 110;
-    let center = 110;
+    let size = 80; // Rayon (160/2)
+    let center = 80;
+    let arc = Math.PI * 2 / segments;
 
-    let arc = Math.PI * 2 / segments.length;
-
-    for(let i=0;i<segments.length;i++){
+    for(let i=0; i<segments; i++){
         ctx.beginPath();
-        ctx.fillStyle = i % 2 === 0 ? "#d32f2f" : "#111";
+        // Couleurs transparentes pour laisser deviner ton image dessous
+        ctx.fillStyle = i % 2 === 0 ? "rgba(211, 47, 47, 0.2)" : "rgba(17, 17, 17, 0.2)";
         ctx.moveTo(center, center);
         ctx.arc(center, center, size, i*arc + angle, (i+1)*arc + angle);
         ctx.fill();
@@ -133,31 +148,24 @@ function drawWheel() {
 
 drawWheel();
 
-/* 🎲 PROBA */
 function getReward(){
     let total = rewards.reduce((a,b)=>a+b.weight,0);
     let rand = Math.random()*total;
-
     for(let r of rewards){
         if(rand < r.weight) return r.text;
         rand -= r.weight;
     }
 }
 
-/* 🎰 ANIMATION REALISTE */
 function spinWheel(targetIndex){
-
-    let arc = 360 / segments.length;
+    let arc = 360 / segments;
     let targetAngle = (360 * 5) + (targetIndex * arc);
-
     let current = 0;
 
     function animate(){
         current += (targetAngle - current) * 0.05;
-
         angle = current * Math.PI / 180;
-
-        ctx.clearRect(0,0,220,220);
+        ctx.clearRect(0,0,160,160);
         drawWheel();
 
         if(Math.abs(targetAngle - current) > 0.5){
@@ -166,45 +174,34 @@ function spinWheel(targetIndex){
             finish();
         }
     }
-
     animate();
 }
 
-/* FIN */
 function finish(){
-    result.innerText = "🎉 BRAVO - " + currentGain;
+    resultText.innerText = "🎉 GAGNÉ : " + currentGain;
     popup.style.display = "block";
-    localStorage.setItem("played","true");
+    localStorage.setItem("played_afond","true");
 }
 
-/* 🔒 déjà joué */
-if(localStorage.getItem("played")){
+if(localStorage.getItem("played_afond")){
     spinBtn.disabled = true;
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* CLICK AVIS */
 document.getElementById("google-zone").onclick = () => {
-
-    window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
-
+    window.open("https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU", "_blank");
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
-    },1500);
+        spinBtn.style.boxShadow = "0 0 20px gold";
+    }, 2000);
 };
 
-/* SPIN */
 let currentGain;
-
 spinBtn.onclick = () => {
-
     spinBtn.disabled = true;
-
     currentGain = getReward();
-
-    let index = Math.floor(Math.random()*5);
-
+    let index = Math.floor(Math.random() * segments);
     spinWheel(index);
 };
 </script>
