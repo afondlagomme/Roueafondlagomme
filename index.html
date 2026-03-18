@@ -1,158 +1,201 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Roue À Fond La Gomme</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-family: 'Arial Black', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Roue À Fond La Gomme</title>
 
-        .background-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('fond-roue.png') no-repeat center center;
-            background-size: contain;
-            z-index: -1;
-        }
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Arial Black', sans-serif;
+}
 
-        /* ZONE INVISIBLE par-dessus le bouton "Laisse ton avis" du dessin */
-        #google-hitbox {
-            position: absolute;
-            bottom: 5%;
-            left: 5%;
-            width: 25%;
-            height: 12%;
-            cursor: pointer;
-            z-index: 100;
-            /* background: rgba(255,0,0,0.3);  <-- Enlève les // au début de cette ligne pour voir la zone rouge et l'ajuster, puis remets-les */
-        }
+.background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('fond-roue.png') no-repeat center center;
+    background-size: contain;
+    z-index: -1;
+}
 
-        #wheel-container {
-            position: absolute;
-            top: 55%; 
-            left: 72%;
-            transform: translate(-50%, -50%);
-            width: 320px;
-            height: 320px;
-        }
+/* ZONE CLIQUABLE GOOGLE */
+#google-hitbox {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    width: 25%;
+    height: 12%;
+    cursor: pointer;
+    z-index: 100;
+}
 
-        #wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: relative;
-            transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
-            background: transparent;
-        }
+/* ROUE */
+#wheel-container {
+    position: absolute;
+    top: 55%; 
+    left: 72%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+}
 
-        #spin-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 75px;
-            height: 75px;
-            background: radial-gradient(#ffcc00, #ff8800);
-            border: 4px solid #fff;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            font-weight: bold;
-            font-size: 14px;
-            color: #000;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+#wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
+}
 
-        #spin-btn:disabled { 
-            background: #555; 
-            color: #888;
-            border-color: #444;
-            cursor: not-allowed; 
-        }
+/* BOUTON */
+#spin-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(#ffcc00, #ff8800);
+    border: 4px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 13px;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
 
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.95);
-            color: gold;
-            padding: 30px;
-            border: 4px solid gold;
-            border-radius: 20px;
-            text-align: center;
-            display: none;
-            z-index: 200;
-            width: 80%;
-        }
-    </style>
+#spin-btn:disabled { 
+    background: #555; 
+    color: #888;
+    border-color: #444;
+    cursor: not-allowed; 
+}
+
+/* POPUP */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.95);
+    color: gold;
+    padding: 30px;
+    border: 4px solid gold;
+    border-radius: 20px;
+    text-align: center;
+    display: none;
+    z-index: 200;
+    width: 80%;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="background-container"></div>
+<div class="background-container"></div>
 
-    <div id="google-hitbox" onclick="openGoogleAvis()"></div>
+<div id="google-hitbox" onclick="openGoogleAvis()"></div>
 
-    <div id="wheel-container">
-        <button id="spin-btn" disabled>CLIQUE SUR L'AVIS</button>
-        <div id="wheel"></div>
-    </div>
+<div id="wheel-container">
+    <button id="spin-btn" disabled>LAISSE UN AVIS</button>
+    <div id="wheel"></div>
+</div>
 
-    <div id="popup" class="popup">
-        <h2 id="win-text"></h2>
-        <p>Prends une capture d'écran et montre-la à l'accueil !</p>
-        <button onclick="location.reload()" style="padding:10px 20px; background:gold; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">REJOUER</button>
-    </div>
+<div id="popup" class="popup">
+    <h2 id="win-text"></h2>
+    <p>📸 Fais une capture et montre-la à l'accueil</p>
+    <button onclick="location.reload()" style="padding:10px 20px; background:gold; border:none; border-radius:5px; font-weight:bold;">REJOUER</button>
+</div>
 
 <script>
-    const wheel = document.getElementById('wheel');
-    const btn = document.getElementById('spin-btn');
-    const popup = document.getElementById('popup');
-    const winText = document.getElementById('win-text');
+const wheel = document.getElementById('wheel');
+const btn = document.getElementById('spin-btn');
+const popup = document.getElementById('popup');
+const winText = document.getElementById('win-text');
 
-    // NOUVEAU LIEN GOOGLE DIRECT POUR "À FOND LA GOMME"
-    function openGoogleAvis() {
-        window.open("https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU", "_blank");
-        
-        // Déblocage du bouton de la roue
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.style.boxShadow = "0 0 30px gold";
-            btn.innerText = "TOURNE !";
-        }, 1000);
+/* 🔒 BLOQUE SI DÉJÀ JOUÉ */
+if(localStorage.getItem("played")){
+    btn.disabled = true;
+    btn.innerText = "DÉJÀ JOUÉ";
+}
+
+/* GOOGLE AVIS */
+function openGoogleAvis() {
+    window.open("https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU", "_blank");
+    
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.style.boxShadow = "0 0 30px gold";
+        btn.innerText = "TOURNE !";
+    }, 1000);
+}
+
+/* 🎯 PROBABILITÉS (OPTIMISÉ BUSINESS) */
+const rewards = [
+    {text:"5%", weight:50},
+    {text:"10%", weight:30},
+    {text:"15%", weight:10},
+    {text:"20%", weight:3},
+    {text:"PERDU", weight:7}
+];
+
+/* 🎲 TIRAGE INTELLIGENT */
+function getReward(){
+    let total = rewards.reduce((sum,r)=>sum+r.weight,0);
+    let rand = Math.random()*total;
+
+    for(let r of rewards){
+        if(rand < r.weight) return r.text;
+        rand -= r.weight;
     }
+}
 
-    const rewards = ["10%", "5%", "10%", "15%", "20%", "PERDU"];
+/* 🎯 ANGLES PRÉCIS */
+const angles = {
+    "5%": 30,
+    "10%": 90,
+    "15%": 150,
+    "20%": 210,
+    "PERDU": 300
+};
 
-    btn.addEventListener('click', () => {
-        btn.disabled = true;
-        const randomRotation = Math.floor(Math.random() * 360) + 3600; 
-        wheel.style.transform = `rotate(${randomRotation}deg)`;
+/* 🎡 SPIN */
+btn.addEventListener('click', () => {
 
-        setTimeout(() => {
-            const actualAngle = (360 - (randomRotation % 360)) % 360;
-            const prizeIndex = Math.floor(actualAngle / 60);
-            winText.innerText = "BRAVO ! TU AS GAGNÉ : " + rewards[prizeIndex];
-            popup.style.display = 'block';
-        }, 4000);
-    });
+    btn.disabled = true;
+
+    const reward = getReward();
+
+    const spin = 3600 + angles[reward];
+
+    wheel.style.transform = `rotate(${spin}deg)`;
+
+    setTimeout(() => {
+        winText.innerText = "🎉 BRAVO ! - " + reward + " SUR TA FACTURE";
+        popup.style.display = 'block';
+
+        /* 🔒 bloque après 1 fois */
+        localStorage.setItem("played", "true");
+
+    }, 4000);
+
+});
 </script>
 
 </body>
