@@ -10,14 +10,11 @@ body {
     margin: 0;
     background: black;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow: hidden;
     font-family: Arial Black;
 }
 
-/* IMAGE FOND */
+/* IMAGE EN FOND */
 .background {
     position: absolute;
     width: 100%;
@@ -25,14 +22,15 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE CLIQUABLE GOOGLE */
-#google {
+/* ZONE CLIQUABLE SUR "LAISSE TON AVIS" */
+#google-zone {
     position: absolute;
     bottom: 6%;
     left: 6%;
-    width: 28%;
-    height: 14%;
+    width: 30%;
+    height: 15%;
     cursor: pointer;
+    z-index: 10;
 }
 
 /* ROUE */
@@ -92,7 +90,8 @@ body {
 
 <div class="background"></div>
 
-<div id="google"></div>
+<!-- 👇 ZONE INVISIBLE SUR TON IMAGE -->
+<div id="google-zone"></div>
 
 <div id="wheel-container">
     <button id="spin" disabled>AVIS</button>
@@ -110,26 +109,26 @@ const wheel = document.getElementById("wheel");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🔒 BLOQUE SI DEJA JOUE */
+/* 🔒 bloque si déjà joué */
 if(localStorage.getItem("played")){
     spinBtn.disabled = true;
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* 🔗 LIEN GOOGLE (FIABLE MOBILE) */
-document.getElementById("google").onclick = () => {
+/* 🔗 CLICK SUR IMAGE */
+document.getElementById("google-zone").onclick = () => {
 
-    const url = "https://search.google.com/local/writereview?placeid=ChIJi0M9FEcnVQ0R5EybZdnYmHU";
+    // 👉 TON LIEN GOOGLE PRO
+    window.location.href = "https://g.page/r/CeRMm2XZ2Jh1EAE/review";
 
-    window.location.href = url;
-
+    // active roue
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
     },1500);
 };
 
-/* 🎯 PROBABILITÉS */
+/* 🎯 PROBA */
 const rewards = [
     {text:"5%", weight:50},
     {text:"10%", weight:30},
