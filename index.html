@@ -1,175 +1,142 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>À Fond la Gomme - Roue</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Roue À Fond La Gomme</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000 url('fond-roue.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Arial Black', sans-serif;
+        }
 
-<style>
-body {
-font-family: Arial;
-text-align:center;
-background:#0f0f0f;
-color:white;
-padding:20px;
-}
+        /* Conteneur pour aligner la roue invisible sur la roue du dessin */
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
 
-h1 {
-color:#FFD000;
-font-size:34px;
-text-shadow:0 0 15px #ffae00;
-}
+        #wheel-container {
+            position: absolute;
+            /* Ces valeurs sont à ajuster pour que la roue soit pile sur l'image */
+            top: 55%; 
+            left: 72%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+        }
 
-.subtitle {
-font-size:18px;
-margin-bottom:20px;
-}
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
 
-#wheel {
-width:320px;
-height:320px;
-border-radius:50%;
-border:12px solid #FFD000;
-margin:30px auto;
-box-shadow:0 0 40px rgba(255,208,0,0.7);
-transition: transform 4s cubic-bezier(.17,.67,.83,.67);
-background: conic-gradient(
-#ffd000 0deg 60deg,
-#ff9d00 60deg 120deg,
-#ff6a00 120deg 180deg,
-#ff3b00 180deg 240deg,
-#ffd000 240deg 300deg,
-#222 300deg 360deg
-);
-}
+        /* Les textes des gains */
+        .segment {
+            position: absolute;
+            width: 50%;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            color: #fff;
+            font-size: 20px;
+            text-shadow: 2px 2px 5px #000;
+        }
 
-#pointer {
-width:0;
-height:0;
-border-left:25px solid transparent;
-border-right:25px solid transparent;
-border-bottom:50px solid #FFD000;
-margin:auto;
-}
+        #spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(#ffcc00, #ff8800);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
 
-button {
-padding:14px 26px;
-font-size:18px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-margin-top:15px;
-font-weight:bold;
-}
+        #spin-btn:disabled { background: #555; }
 
-.reviewBtn {
-background:#ff3b00;
-color:white;
-}
-
-.spinBtn {
-background:#FFD000;
-color:black;
-}
-
-.result {
-font-size:26px;
-margin-top:20px;
-font-weight:bold;
-color:#FFD000;
-text-shadow:0 0 10px #ffae00;
-}
-
-</style>
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: gold;
+            padding: 30px;
+            border: 4px solid gold;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+        }
+    </style>
 </head>
-
 <body>
 
-<h1>À FOND LA GOMME</h1>
+<div class="container">
+    <div id="wheel-container">
+        <button id="spin-btn">TIRE !</button>
+        <div id="wheel">
+            <div class="segment" style="transform: rotate(30deg) translate(20px);"><span>10%</span></div>
+            <div class="segment" style="transform: rotate(90deg) translate(20px);"><span>PERDU</span></div>
+            <div class="segment" style="transform: rotate(150deg) translate(20px);"><span>20%</span></div>
+            <div class="segment" style="transform: rotate(210deg) translate(20px);"><span>15%</span></div>
+            <div class="segment" style="transform: rotate(270deg) translate(20px);"><span>10%</span></div>
+            <div class="segment" style="transform: rotate(330deg) translate(20px);"><span>5%</span></div>
+        </div>
+    </div>
+</div>
 
-<p class="subtitle">🎁 Tente ta chance et gagne une remise immédiate</p>
-
-<p>1️⃣ Laisse ton avis Google</p>
-
-<a href="https://www.google.com/search?q=avis+a+fond+la+gomme" target="_blank">
-<button class="reviewBtn">Laisser un avis</button>
-</a>
-
-<p>2️⃣ Clique pour jouer</p>
-
-<button onclick="enableSpin()" id="unlock" class="spinBtn">J'ai laissé un avis</button>
-
-<div id="pointer"></div>
-<div id="wheel"></div>
-
-<button onclick="spinWheel()" id="spin" disabled class="spinBtn">TOURNER LA ROUE</button>
-
-<div class="result" id="result"></div>
+<div id="popup" class="popup">
+    <h2 id="win-text"></h2>
+    <p>Prends une capture d'écran et montre-la au comptoir !</p>
+    <button onclick="location.reload()" style="padding:10px; background:gold; border:none; border-radius:5px; cursor:pointer;">Rejouer</button>
+</div>
 
 <script>
+    const wheel = document.getElementById('wheel');
+    const btn = document.getElementById('spin-btn');
+    const popup = document.getElementById('popup');
+    const winText = document.getElementById('win-text');
 
-let wheel = document.getElementById("wheel");
-let result = document.getElementById("result");
-let spinButton = document.getElementById("spin");
+    const rewards = ["10%", "5%", "10%", "15%", "20%", "PERDU"];
 
-// 🎯 PROBABILITÉS
-let rewards = [
-"5%","5%","5%",
-"10%","10%",
-"15%",
-"20%",
-"Perdu"
-];
+    btn.addEventListener('click', () => {
+        btn.disabled = true;
+        const randomSpin = Math.floor(Math.random() * 360) + 3600; 
+        wheel.style.transform = `rotate(${randomSpin}deg)`;
 
-function enableSpin(){
-spinButton.disabled = false;
-alert("🎁 Tu peux maintenant tourner la roue !");
-}
-
-function spinWheel(){
-
-spinButton.disabled = true;
-
-// tirage pondéré
-let rand = Math.floor(Math.random() * rewards.length);
-
-// rotation
-let deg = 3600 + (rand * (360 / rewards.length));
-
-wheel.style.transform = "rotate("+deg+"deg)";
-
-setTimeout(()=>{
-
-let gain = rewards[rand];
-
-if(gain === "Perdu"){
-result.innerHTML = "😢 Dommage, retente ta chance la prochaine fois !";
-}else{
-result.innerHTML = "🎉 Bravo ! Tu gagnes -" + gain;
-}
-
-// 🎉 petit effet
-confetti();
-
-},4000);
-}
-
-// confetti simple
-function confetti(){
-for(let i=0;i<80;i++){
-let div = document.createElement("div");
-div.style.position = "fixed";
-div.style.width = "5px";
-div.style.height = "5px";
-div.style.background = "yellow";
-div.style.top = Math.random()*window.innerHeight+"px";
-div.style.left = Math.random()*window.innerWidth+"px";
-document.body.appendChild(div);
-
-setTimeout(()=>{div.remove();},1500);
-}
-}
-
+        setTimeout(() => {
+            const actualDeg = randomSpin % 360;
+            const prizeIndex = Math.floor(actualDeg / 60);
+            winText.innerText = "BRAVO ! TU AS GAGNÉ : " + rewards[prizeIndex];
+            popup.style.display = 'block';
+        }, 4000);
+    });
 </script>
 
 </body>
