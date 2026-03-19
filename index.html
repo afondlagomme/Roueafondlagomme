@@ -22,44 +22,41 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE AVIS */
+/* ZONE CLIQUABLE AVIS */
 #google-zone {
     position: absolute;
-    bottom: 20%;
+    bottom: 22%;
     left: 4%;
-    width: 38%;
-    height: 16%;
+    width: 40%;
+    height: 18%;
     z-index: 10;
     cursor: pointer;
 }
 
-/* ROUE (CENTRÉE) */
+/* ROUE PARFAITEMENT AJUSTÉE */
 #wheelCanvas {
     position: absolute;
-    top: 54%;
-    left: 69%;
+    top: 52%;
+    left: 70%;
     transform: translate(-50%, -50%);
-    width: 220px;
-    height: 220px;
+    width: 180px;
+    height: 180px;
 }
 
 /* BOUTON */
 #spin {
     position: absolute;
-    top: 54%;
-    left: 69%;
+    top: 52%;
+    left: 70%;
     transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    background: gold;
-    border: 4px solid white;
+    background: radial-gradient(#ffd700, #ff8c00);
+    border: 3px solid white;
     font-weight: bold;
     cursor: pointer;
-}
-
-#spin:disabled {
-    background: gray;
+    font-size: 12px;
 }
 
 /* POPUP */
@@ -85,12 +82,12 @@ body {
 
 <div id="google-zone"></div>
 
-<canvas id="wheelCanvas" width="220" height="220"></canvas>
+<canvas id="wheelCanvas" width="180" height="180"></canvas>
 <button id="spin" disabled>AVIS</button>
 
 <div id="popup">
     <h2 id="result"></h2>
-    <p>📸 Capture et montre à l'accueil</p>
+    <p>📸 Fais une capture et montre à l'accueil</p>
 </div>
 
 <script>
@@ -101,29 +98,17 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🎯 8 CASES */
-const segments = new Array(8).fill("");
-
-const rewards = [
-    {text:"5%", weight:40},
-    {text:"5%", weight:40},
-    {text:"10%", weight:30},
-    {text:"10%", weight:30},
-    {text:"15%", weight:10},
-    {text:"20%", weight:5},
-    {text:"PERDU", weight:10},
-    {text:"5%", weight:40}
-];
-
+/* 🎯 CONFIG */
+const segments = 8;
 let angle = 0;
 
-/* 🎨 DESSIN */
+/* 🎨 DESSIN ROUE */
 function drawWheel() {
-    let size = 110;
-    let center = 110;
-    let arc = Math.PI * 2 / segments.length;
+    let size = 90;
+    let center = 90;
+    let arc = Math.PI * 2 / segments;
 
-    for(let i=0;i<segments.length;i++){
+    for(let i=0;i<segments;i++){
         ctx.beginPath();
         ctx.fillStyle = i % 2 === 0 ? "#d32f2f" : "#111";
         ctx.moveTo(center, center);
@@ -134,57 +119,37 @@ function drawWheel() {
 
 drawWheel();
 
-/* 🎲 PROBA */
-function getReward(){
-    let total = rewards.reduce((a,b)=>a+b.weight,0);
-    let rand = Math.random()*total;
-
-    for(let r of rewards){
-        if(rand < r.weight) return r.text;
-        rand -= r.weight;
-    }
-}
+/* 🎲 GAINS */
+const rewards = [
+    "5%","5%","10%","10%","15%","20%","PERDU","5%"
+];
 
 /* 🎰 SPIN */
-function spinWheel(targetIndex){
+spinBtn.onclick = () => {
 
-    let arc = 360 / segments.length;
-    let targetAngle = (360 * 5) + (targetIndex * arc);
+    spinBtn.disabled = true;
 
-    let current = 0;
+    let gain = rewards[Math.floor(Math.random()*rewards.length)];
 
-    function animate(){
-        current += (targetAngle - current) * 0.05;
+    let rotation = 3600 + Math.random()*360;
 
-        angle = current * Math.PI / 180;
+    canvas.style.transition = "transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)";
+    canvas.style.transform = "translate(-50%, -50%) rotate(" + rotation + "deg)";
 
-        ctx.clearRect(0,0,220,220);
-        drawWheel();
+    setTimeout(()=>{
+        result.innerText = "🎉 BRAVO - " + gain;
+        popup.style.display = "block";
+        localStorage.setItem("played","true");
+    }, 4000);
+};
 
-        if(Math.abs(targetAngle - current) > 0.5){
-            requestAnimationFrame(animate);
-        } else {
-            finish();
-        }
-    }
-
-    animate();
-}
-
-/* FIN */
-function finish(){
-    result.innerText = "🎉 BRAVO - " + currentGain;
-    popup.style.display = "block";
-    localStorage.setItem("played","true");
-}
-
-/* 🔒 déjà joué */
+/* 🔒 BLOQUER MULTI-JEU */
 if(localStorage.getItem("played")){
     spinBtn.disabled = true;
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* CLICK AVIS */
+/* ⭐ GOOGLE AVIS */
 document.getElementById("google-zone").onclick = () => {
 
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
@@ -192,21 +157,7 @@ document.getElementById("google-zone").onclick = () => {
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
-    },1500);
-};
-
-/* SPIN */
-let currentGain;
-
-spinBtn.onclick = () => {
-
-    spinBtn.disabled = true;
-
-    currentGain = getReward();
-
-    let index = Math.floor(Math.random()*segments.length);
-
-    spinWheel(index);
+    }, 1200);
 };
 </script>
 
