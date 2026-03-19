@@ -14,6 +14,7 @@ body {
     font-family: Arial Black;
 }
 
+/* IMAGE FOND */
 .background {
     position: absolute;
     width: 100%;
@@ -21,6 +22,7 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
+/* ZONE AVIS */
 #google-zone {
     position: absolute;
     bottom: 20%;
@@ -31,27 +33,28 @@ body {
     cursor: pointer;
 }
 
+/* ROUE (CENTRÉE) */
 #wheelCanvas {
     position: absolute;
-    top: 56%;
-    left: 72%;
+    top: 54%;
+    left: 69%;
     transform: translate(-50%, -50%);
-    width: 150px;
-    height: 150px;
+    width: 220px;
+    height: 220px;
 }
 
+/* BOUTON */
 #spin {
     position: absolute;
-    top: 56%;
-    left: 72%;
+    top: 54%;
+    left: 69%;
     transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: gold;
     border: 4px solid white;
     font-weight: bold;
-    font-size: 10px;
     cursor: pointer;
 }
 
@@ -59,6 +62,7 @@ body {
     background: gray;
 }
 
+/* POPUP */
 #popup {
     position: fixed;
     top: 50%;
@@ -81,7 +85,7 @@ body {
 
 <div id="google-zone"></div>
 
-<canvas id="wheelCanvas" width="150" height="150"></canvas>
+<canvas id="wheelCanvas" width="220" height="220"></canvas>
 <button id="spin" disabled>AVIS</button>
 
 <div id="popup">
@@ -97,21 +101,26 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-const segments = ["", "", "", "", ""];
+/* 🎯 8 CASES */
+const segments = new Array(8).fill("");
 
 const rewards = [
-    {text:"5%", weight:50},
+    {text:"5%", weight:40},
+    {text:"5%", weight:40},
+    {text:"10%", weight:30},
     {text:"10%", weight:30},
     {text:"15%", weight:10},
-    {text:"20%", weight:3},
-    {text:"PERDU", weight:7}
+    {text:"20%", weight:5},
+    {text:"PERDU", weight:10},
+    {text:"5%", weight:40}
 ];
 
 let angle = 0;
 
+/* 🎨 DESSIN */
 function drawWheel() {
-    let size = 75;
-    let center = 75;
+    let size = 110;
+    let center = 110;
     let arc = Math.PI * 2 / segments.length;
 
     for(let i=0;i<segments.length;i++){
@@ -125,59 +134,78 @@ function drawWheel() {
 
 drawWheel();
 
+/* 🎲 PROBA */
 function getReward(){
     let total = rewards.reduce((a,b)=>a+b.weight,0);
     let rand = Math.random()*total;
+
     for(let r of rewards){
         if(rand < r.weight) return r.text;
         rand -= r.weight;
     }
 }
 
+/* 🎰 SPIN */
 function spinWheel(targetIndex){
+
     let arc = 360 / segments.length;
     let targetAngle = (360 * 5) + (targetIndex * arc);
+
     let current = 0;
 
     function animate(){
         current += (targetAngle - current) * 0.05;
+
         angle = current * Math.PI / 180;
-        ctx.clearRect(0,0,150,150);
+
+        ctx.clearRect(0,0,220,220);
         drawWheel();
+
         if(Math.abs(targetAngle - current) > 0.5){
             requestAnimationFrame(animate);
         } else {
             finish();
         }
     }
+
     animate();
 }
 
-let currentGain;
-
+/* FIN */
 function finish(){
     result.innerText = "🎉 BRAVO - " + currentGain;
     popup.style.display = "block";
-    localStorage.setItem("played_afond_gomme","true");
+    localStorage.setItem("played","true");
 }
 
-if(localStorage.getItem("played_afond_gomme")){
+/* 🔒 déjà joué */
+if(localStorage.getItem("played")){
     spinBtn.disabled = true;
-    spinBtn.innerText = "FINI";
+    spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
+/* CLICK AVIS */
 document.getElementById("google-zone").onclick = () => {
+
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
+
     setTimeout(()=>{
         spinBtn.disabled = false;
         spinBtn.innerText = "TOURNE";
     },1500);
 };
 
+/* SPIN */
+let currentGain;
+
 spinBtn.onclick = () => {
+
     spinBtn.disabled = true;
+
     currentGain = getReward();
+
     let index = Math.floor(Math.random()*segments.length);
+
     spinWheel(index);
 };
 </script>
