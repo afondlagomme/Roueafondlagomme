@@ -21,27 +21,27 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ✅ ZONE AVIS CORRIGÉE (REMONTÉE) */
+/* ✅ ZONE AVIS PARFAITEMENT ALIGNÉE */
 #google-zone {
     position: absolute;
-    bottom: 20%;   /* 🔼 remonté */
-    left: 6%;
-    width: 40%;
-    height: 14%;
+    bottom: 25%;
+    left: 8%;
+    width: 44%;
+    height: 12%;
     cursor: pointer;
 }
 
-/* 🎯 ROUE CORRIGÉE */
+/* 🎯 ROUE VALIDÉE */
 #wheelCanvas {
     position: absolute;
-    top: 53%;   /* 🔽 BAISSÉ CLAIREMENT */
-    left: 76%;  /* ➡️ PLUS À DROITE */
+    top: 53%;
+    left: 76%;
     transform: translate(-50%, -50%);
     width: 155px;
     height: 155px;
 }
 
-/* ✅ BOUTON CENTRÉ PARFAIT */
+/* BOUTON */
 #spin {
     position: absolute;
     top: 53%;
@@ -69,6 +69,7 @@ body {
     border: 3px solid gold;
     border-radius: 15px;
     display: none;
+    text-align: center;
 }
 </style>
 </head>
@@ -77,15 +78,19 @@ body {
 
 <div class="background">
 
+    <!-- ZONE CLIQUABLE AVIS -->
     <div id="google-zone"></div>
 
+    <!-- ROUE -->
     <canvas id="wheelCanvas" width="155" height="155"></canvas>
     <button id="spin" disabled>AVIS</button>
 
 </div>
 
+<!-- POPUP -->
 <div id="popup">
     <h2 id="result"></h2>
+    <p>📸 Fais une capture et montre à l'accueil</p>
 </div>
 
 <script>
@@ -142,8 +147,9 @@ if(localStorage.getItem("played")){
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* GOOGLE */
+/* GOOGLE AVIS */
 document.getElementById("google-zone").onclick = () => {
+
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
 
     setTimeout(()=>{
