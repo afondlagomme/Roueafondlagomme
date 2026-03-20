@@ -21,31 +21,31 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ZONE AVIS */
+/* ✅ ZONE AVIS RECALÉE */
 #google-zone {
     position: absolute;
-    bottom: 18%;
-    left: 5%;
-    width: 38%;
-    height: 16%;
+    bottom: 15%;
+    left: 6%;
+    width: 40%;
+    height: 14%;
     cursor: pointer;
 }
 
-/* 🎯 ROUE POSITION PIXEL (PARFAIT POUR TON IMAGE) */
+/* 🎯 ROUE AJUSTÉE */
 #wheelCanvas {
     position: absolute;
-    top: 48%;
-    left: 73%;
+    top: 50%;   /* 🔽 baissée */
+    left: 74%;  /* ➡️ décalée droite */
     transform: translate(-50%, -50%);
     width: 155px;
     height: 155px;
 }
 
-/* BOUTON */
+/* ✅ BOUTON PARFAITEMENT CENTRÉ */
 #spin {
     position: absolute;
-    top: 48%;
-    left: 73%;
+    top: 50%;
+    left: 74%;
     transform: translate(-50%, -50%);
     width: 48px;
     height: 48px;
@@ -96,9 +96,8 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* 🎯 CONFIG */
+/* CONFIG */
 const segments = 8;
-let angle = 0;
 
 /* 🎨 ROUE */
 function drawWheel() {
@@ -114,13 +113,12 @@ function drawWheel() {
         ctx.fill();
     }
 }
-
 drawWheel();
 
-/* 🎲 GAINS */
+/* GAINS */
 const rewards = ["5%","5%","10%","10%","15%","20%","PERDU","5%"];
 
-/* 🎰 SPIN */
+/* SPIN */
 spinBtn.onclick = () => {
 
     spinBtn.disabled = true;
@@ -139,7 +137,7 @@ spinBtn.onclick = () => {
     }, 4000);
 };
 
-/* 🔒 BLOQUAGE */
+/* BLOQUAGE */
 if(localStorage.getItem("played")){
     spinBtn.disabled = true;
     spinBtn.innerText = "DÉJÀ JOUÉ";
