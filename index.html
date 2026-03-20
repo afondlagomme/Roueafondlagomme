@@ -21,31 +21,31 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ✅ ZONE AVIS RECALÉE */
+/* ✅ ZONE AVIS CORRIGÉE (REMONTÉE) */
 #google-zone {
     position: absolute;
-    bottom: 15%;
+    bottom: 20%;   /* 🔼 remonté */
     left: 6%;
     width: 40%;
     height: 14%;
     cursor: pointer;
 }
 
-/* 🎯 ROUE AJUSTÉE */
+/* 🎯 ROUE CORRIGÉE */
 #wheelCanvas {
     position: absolute;
-    top: 50%;   /* 🔽 baissée */
-    left: 74%;  /* ➡️ décalée droite */
+    top: 53%;   /* 🔽 BAISSÉ CLAIREMENT */
+    left: 76%;  /* ➡️ PLUS À DROITE */
     transform: translate(-50%, -50%);
     width: 155px;
     height: 155px;
 }
 
-/* ✅ BOUTON PARFAITEMENT CENTRÉ */
+/* ✅ BOUTON CENTRÉ PARFAIT */
 #spin {
     position: absolute;
-    top: 50%;
-    left: 74%;
+    top: 53%;
+    left: 76%;
     transform: translate(-50%, -50%);
     width: 48px;
     height: 48px;
@@ -96,10 +96,9 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* CONFIG */
+/* ROUE */
 const segments = 8;
 
-/* 🎨 ROUE */
 function drawWheel() {
     let size = 77;
     let center = 77;
