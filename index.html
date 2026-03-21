@@ -21,7 +21,7 @@ body {
     background: url('fond-roue.png') center/contain no-repeat;
 }
 
-/* ✅ ZONE AVIS PARFAITEMENT ALIGNÉE */
+/* ZONE AVIS */
 #google-zone {
     position: absolute;
     bottom: 25%;
@@ -31,7 +31,7 @@ body {
     cursor: pointer;
 }
 
-/* 🎯 ROUE VALIDÉE */
+/* ROUE */
 #wheelCanvas {
     position: absolute;
     top: 53%;
@@ -78,16 +78,13 @@ body {
 
 <div class="background">
 
-    <!-- ZONE CLIQUABLE AVIS -->
     <div id="google-zone"></div>
 
-    <!-- ROUE -->
     <canvas id="wheelCanvas" width="155" height="155"></canvas>
     <button id="spin" disabled>AVIS</button>
 
 </div>
 
-<!-- POPUP -->
 <div id="popup">
     <h2 id="result"></h2>
     <p>📸 Fais une capture et montre à l'accueil</p>
@@ -101,9 +98,10 @@ const spinBtn = document.getElementById("spin");
 const popup = document.getElementById("popup");
 const result = document.getElementById("result");
 
-/* ROUE */
+/* 🎯 CONFIG */
 const segments = 8;
 
+/* 🎨 ROUE */
 function drawWheel() {
     let size = 77;
     let center = 77;
@@ -119,10 +117,12 @@ function drawWheel() {
 }
 drawWheel();
 
-/* GAINS */
-const rewards = ["5%","5%","10%","10%","15%","20%","PERDU","5%"];
+/* 🎲 PROBABILITÉS (IMPORTANT) */
+const rewards = [
+    "5€","5€","5€","10€","10€","10€","15€","20€"
+];
 
-/* SPIN */
+/* 🎰 SPIN */
 spinBtn.onclick = () => {
 
     spinBtn.disabled = true;
@@ -135,7 +135,7 @@ spinBtn.onclick = () => {
     canvas.style.transform = "translate(-50%, -50%) rotate("+rotation+"deg)";
 
     setTimeout(()=>{
-        result.innerText = "🎉 BRAVO - " + gain;
+        result.innerText = "🎉 BRAVO - " + gain + " DE REMISE";
         popup.style.display = "block";
         localStorage.setItem("played","true");
     }, 4000);
@@ -147,9 +147,8 @@ if(localStorage.getItem("played")){
     spinBtn.innerText = "DÉJÀ JOUÉ";
 }
 
-/* GOOGLE AVIS */
+/* GOOGLE */
 document.getElementById("google-zone").onclick = () => {
-
     window.open("https://g.page/r/CeRMm2XZ2Jh1EAE/review", "_blank");
 
     setTimeout(()=>{
